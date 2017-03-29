@@ -24,10 +24,6 @@ exports.getRandomOne = function() {
   return quotes[rand];
 }
 
-
-
-
-
 // Adverts
 var tableSvc = azure.createTableService();
 tableSvc.createTableIfNotExists('adverts', function(error, result, response){
