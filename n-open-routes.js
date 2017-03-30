@@ -15,15 +15,15 @@ app.get('/api/open',function(request, response){
 })
 
 app.post('/api/open',function(request, response){
-    azureTableHelper.post('advertstable','geoadds', request, response);
+    azureTableHelper.post(request, response);
 })
 
 app.put('/api/open',function(request, response){
-    var test;
+    azureTableHelper.put(request, response);
 })
 
 app.delete('/api/open',function(request, response){
-    var test;
+     azureTableHelper.delete(request, response);
 })
 
 

@@ -60,8 +60,19 @@ function get(tableName, partitionKey, request, response) {
         })
 }
 
+//Post example 
+// {
+// 	"tableName": "advertsTable",
+//     "partitionKey": "geoadds",
+//     "rowKey": "CKGConsulting2",
+//     "data":{
+//     		"value1": "test",
+//     		"value2": "test"
+//     		}
+//   }
+
 //post 
-function post(tableName, partitionKey, request, response) {
+function post(request, response) {
     var data = JSON.stringify(request.body.data);
     
     var entity = new Entity(request.body.partitionKey, request.body.rowKey, data);
@@ -71,26 +82,44 @@ function post(tableName, partitionKey, request, response) {
     });
 }
 
+// {
+// 	"tableName": "advertsTable",
+//     "partitionKey": "geoadds",
+//     "rowKey": "CKGConsulting2",
+//     "data":{
+//     		"value1": "test",
+//     		"value2": "update"
+//     		}
+//   }
+
 //put 
-function put(tableName, partitionKey, request, response) {
-    var body = JSON.stringify(request.body);
-    var name = body.name;
-    var partitionKey = partitionKey;
-    var entity = new Entity(partitionKey, name, body);
-    client.updateEntity(tableName, entity, { force: true }, function (error, data) {
+function put(request, response) {
+    var data = JSON.stringify(request.body.data);
+
+    var entity = new Entity(request.body.partitionKey, request.body.rowKey, data);
+    client.updateEntity(request.body.tableName, entity, { force: true }, function (error, data) {
         handleError(error, response);
         handleSuccess(data, response);
     });
 }
 
-//delete
-function deleteEntity(tableName, partitionKey, request, response) {
-    var body = JSON.stringify(request.body);
-    var name = body.name;
-    var etag = body.__etag
+// {
+// 	"tableName": "advertsTable",
+//     "partitionKey": "geoadds",
+//     "rowKey": "CKGConsulting2",
+//     "data":{
+//     		"value1": "test",
+//     		"value2": "update"
+//     		}
+//   }
 
-    var entity = new Entity(partitionKey, name, '', etag);
-    client.deleteEntity(tableName, entity, function (error, data) {
+//delete
+function deleteEntity(request, response) {
+    var data = JSON.stringify(request.body.data);
+    var etag = request.body.__etag
+
+    var entity = new Entity(request.query.partitionKey, request.query.rowKey, '', etag);
+    client.deleteEntity(request.query.tableName, entity, {force: true}, function (error, data) {
         handleError(error, response);
         handleSuccess(data, response);
     });
