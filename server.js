@@ -36,6 +36,7 @@ app.use(require('./anonymous-routes'));
 app.use(require('./protected-routes'));
 app.use(require('./user-routes'));
 app.use(require('./n-open-routes'));
+app.use(require('./n-api-data'));
 
 var port = process.env.PORT || 3001;
 

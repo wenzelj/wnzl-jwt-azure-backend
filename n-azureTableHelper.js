@@ -50,9 +50,11 @@ function getPromise (tableName, partitionKey, name) {
     return promise;
 }
 
-function get(tableName, partitionKey, request, response) {
-    client.queryEntities(tableName, {
-        query: azureTable.Query.create('PartitionKey', '==', partitionKey)
+
+//http://localhost:3001/api/open?tableName=advertsTable&partitionKey=geoadds
+function get(request, response) {
+    client.queryEntities(request.query.tableName, {
+        query: azureTable.Query.create('PartitionKey', '==', request.query.partitionKey)
     },
         function (error, data, continuation) {
             handleError(error, response);
@@ -112,7 +114,7 @@ function put(request, response) {
 //     		"value2": "update"
 //     		}
 //   }
-
+//http://localhost:3001/api/open?tableName=advertsTable&partitionKey=geoadds&rowKey=CKGConsulting2
 //delete
 function deleteEntity(request, response) {
     var data = JSON.stringify(request.body.data);
