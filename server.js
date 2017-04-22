@@ -5,7 +5,6 @@ var express = require('express');
 var errorhandler = require('errorhandler');
 var dotenv = require('dotenv');
 var bodyParser = require('body-parser');
-
 var app = express();
 
 dotenv.load();
@@ -31,9 +30,6 @@ if (process.env.NODE_ENV === 'development') {
   app.use(errorhandler())
 }
 
-app.use(require('./analytic-routes'));
-app.use(require('./anonymous-routes'));
-app.use(require('./protected-routes'));
 app.use(require('./user-routes'));
 app.use(require('./n-open-routes'));
 app.use(require('./n-api-data'));

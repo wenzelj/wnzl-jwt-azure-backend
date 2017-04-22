@@ -1,5 +1,4 @@
 var express = require('express'),
-    quoter = require('./quoter'),
     jwt     = require('express-jwt'),
     config  = require('./config'),
     azureTableHelper = require('./n-azureTableHelper');
@@ -13,10 +12,6 @@ var jwtCheck = jwt({
   secret: config.secret
 });
 app.use(apiPath, jwtCheck);
-
-app.get('/api/random-quote', function (req, res) {
-    res.status(200).send(quoter.getRandomOne());
-});
 
 app.get(apiPath ,function(request, response){
     azureTableHelper.get(request, response);

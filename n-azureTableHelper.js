@@ -1,5 +1,5 @@
 var azureTable = require('azure-table-node');
-var config = require('./n-config');
+var config  = require('./config');
 
 azureTable.setDefaultClient(config.azureConfig);
 var client = azureTable.getDefaultClient();
