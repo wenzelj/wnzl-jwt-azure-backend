@@ -78,7 +78,7 @@ function post(request, response) {
     var data = JSON.stringify(request.body.data);
     
     var entity = new Entity(request.body.partitionKey, request.body.rowKey, data);
-    client.insertEntity(tableName, entity, function (error, data) {
+    client.insertEntity(request.body.tableName, entity, function (error, data) {
            handleError(error, response);
             handleSuccess(data, response);
     });
