@@ -127,28 +127,6 @@ function deleteEntity(request, response) {
     });
 }
 
-//Post example 
-// {
-// 	"tableName": "advertsTable",
-//     "partitionKey": "geoadds",
-//     "rowKey": "CKGConsulting2",
-//     "data":{
-//     		"value1": "test",
-//     		"value2": "test"
-//     		}
-//   }
-
-//log errors 
-function log(request, response) {
-    var data = JSON.stringify(request.body.data);
-    
-    var entity = new Entity(request.body.partitionKey, request.body.rowKey, data);
-    client.insertEntity(tableName, entity, function (error, data) {
-           handleError(error, response);
-            handleSuccess(data, response);
-    });
-}
-
 module.exports = {
     getPromise : getPromise,
     get : get,

@@ -30,7 +30,8 @@ if (process.env.NODE_ENV === 'development') {
   app.use(errorhandler())
 }
 
-app.use(require('./user-routes'));
+//app.use(require('./user-routes'));
+app.use(require('./n-user'));
 app.use(require('./n-open-routes'));
 app.use(require('./n-api-data'));
 
