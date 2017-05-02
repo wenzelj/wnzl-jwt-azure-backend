@@ -3,7 +3,7 @@ var express = require('express'),
     config  = require('./config'),
     jwt     = require('jsonwebtoken');
     azureTableHelper = require('./n-azureTableHelper');
-
+    cryptoAes = require("crypto-js/aes");
 var app = module.exports = express.Router();
 var tablename = "users";
 // XXX: This should be a database of users :).
@@ -12,6 +12,15 @@ var users = [{
   username: 'gonto',
   password: 'gonto'
 }];
+
+function encryptPassword(password){
+  var encrypted = cryptoAes.encrypt(password, config.secret); 
+   return encrypted.ciphertext;
+}
+
+function decryptPassword(password){
+   return cryptoAes.decrypt(password, config.secret);
+}
 
 function createToken(user) {
   return jwt.sign(_.omit(user, 'password'), config.secret, { expiresInMinutes: 60*5 });
@@ -25,51 +34,47 @@ function createToken(user) {
 //     		"password": "password"
 //     		}
 //   }
-app.post('/users', function(request, response) {
+app.post('/register', function(request, response) {
   if (!request.body.partitionKey || !request.body.rowKey || !request.body.data.password) {
     return request.status(400).send("You must send the username and the password");
   }
-//   var request = {"query":{"tableName": req.body.tableName, "partitionKey": req.body.partitionKey}}
-//   var result = azureTableHelper.get(request, res);
 
-
-//   if (_.find(users, {username: req.body.username})) {
-//    return res.status(400).send("A user with that username already exists");
-//   }
-
-//   var profile = _.pick(req.body, 'username', 'password', 'extra');
-//   profile.id = _.max(users, 'id').id + 1;
-
-//   users.push(profile);
 
     var res = {}
-
     res.status = function(st){
         function send(data){
             if(data.code == "EntityAlreadyExists"){
                  return response.status(400).send("A user with that username already exists");
             }
             else{
-                var profile = _.pick(req.body, 'partitionKey', 'password', 'extra');
+                var profile = _.pick(request.body, 'partitionKey', 'password', 'extra');
                 response.status(201).send({id_token: createToken(profile)})
             }
             }
-
         return {
             send:send
         }
     }
     
+    request.body.data.password = encryptPassword(request.body.data.password);
   azureTableHelper.post(request, res);
 
 });
 
+// {
+// 	"tableName": "users",
+//     "partitionKey": "username",
+//     "rowKey": "name",
+//     "data":{
+//     		"password": "password"
+//     		}
+//   }
 app.post('/sessions/create', function(req, res) {
-  if (!req.body.username || !req.body.password) {
+  if (!req.body.partitionKey || !req.body.data.password) {
     return res.status(400).send("You must send the username and the password");
   }
 
-  var user = _.find(users, {username: req.body.username});
+  var user = azureTableHelper.get(req, res);
   if (!user) {
     return res.status(401).send("The username or password don't match");
   }

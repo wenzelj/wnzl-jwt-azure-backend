@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/auth0/in-memory-todo.git"
+    "url": ""
   },
   "keywords": [
     "todo",
@@ -17,12 +17,12 @@
     "jwt",
     "auth0"
   ],
-  "author": "Martin Gontovnikas",
+  "author": "Wenzel Joubert",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/auth0/in-memory-todo/issues"
+    "url": ""
   },
-  "homepage": "https://github.com/auth0/in-memory-todo",
+  "homepage": "",
   "dependencies": {
     "body-parser": "^1.6.5",
     "compression": "^1.0.11",
