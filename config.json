@@ -1,5 +1,6 @@
 {
   "secret": "wnzl rocks!",
+  "base64Key": "MTIzNDU2NzgxMjM0NTY3OA==",
    "azureConfig" : {
       "accountUrl": "https://ckgconsulting.table.core.windows.net/",
       "accountName": "ckgconsulting",

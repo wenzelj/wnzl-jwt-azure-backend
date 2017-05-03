@@ -50,6 +50,11 @@ function getPromise (tableName, partitionKey, name) {
     return promise;
 }
 
+function createQuery(request){
+    request.query.tableName = request.body.tableName;
+    request.query.partitionKey = request.body.partitionKey;
+}
+
 
 //http://localhost:3001/api/open?tableName=advertsTable&partitionKey=geoadds
 function get(request, response) {
@@ -132,5 +137,6 @@ module.exports = {
     get : get,
     post : post,
     put : put,
-    delete : deleteEntity
+    delete : deleteEntity,
+    createQuery: createQuery
 }

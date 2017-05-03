@@ -4,6 +4,7 @@ var express = require('express'),
     jwt     = require('jsonwebtoken');
     azureTableHelper = require('./n-azureTableHelper');
     cryptoAes = require("crypto-js/aes");
+    cryptoEnc = require("crypto-js/enc-utf8")
 var app = module.exports = express.Router();
 var tablename = "users";
 // XXX: This should be a database of users :).
@@ -14,12 +15,14 @@ var users = [{
 }];
 
 function encryptPassword(password){
-  var encrypted = cryptoAes.encrypt(password, config.secret); 
-   return encrypted.ciphertext;
+  var encrypted = cryptoAes.encrypt(password, config.base64Key); 
+   return encrypted.toString();
 }
 
 function decryptPassword(password){
-   return cryptoAes.decrypt(password, config.secret);
+   var bytes  = cryptoAes.decrypt(password, config.base64Key);
+   var plaintext = bytes.toString(cryptoEnc.Utf8);
+   return plaintext;
 }
 
 function createToken(user) {
@@ -38,8 +41,6 @@ app.post('/register', function(request, response) {
   if (!request.body.partitionKey || !request.body.rowKey || !request.body.data.password) {
     return request.status(400).send("You must send the username and the password");
   }
-
-
     var res = {}
     res.status = function(st){
         function send(data){
@@ -69,21 +70,44 @@ app.post('/register', function(request, response) {
 //     		"password": "password"
 //     		}
 //   }
-app.post('/sessions/create', function(req, res) {
-  if (!req.body.partitionKey || !req.body.data.password) {
-    return res.status(400).send("You must send the username and the password");
+
+function handleSessionCreation(request, response){
+  
+  function assignUser(data){
+    var user = JSON.parse(data[0].value1);
+    if (!user) {
+      return response.status(401).send("The username or password don't match");
+    }
+
+    var decryptedPassword = decryptPassword(user.password);
+
+    if (!decryptedPassword === request.body.data.password) {
+      return response.status(401).send("The username or password don't match");
+    }
+
+    response.status(201).send({
+      id_token: createToken(user)
+    });
+
+  }
+  var res = {}
+  res.status = function(st){
+    function send(data){
+          assignUser(data);
+      }
+      return {
+          send:send
+      }
   }
 
-  var user = azureTableHelper.get(req, res);
-  if (!user) {
-    return res.status(401).send("The username or password don't match");
+  azureTableHelper.createQuery(request)
+  azureTableHelper.get(request, res);
+}
+
+app.post('/sessions/create', function(request, response) {
+  if (!request.body.partitionKey || !request.body.data.password) {
+    return response.status(400).send("You must send the username and the password");
   }
 
-  if (!user.password === req.body.password) {
-    return res.status(401).send("The username or password don't match");
-  }
-
-  res.status(201).send({
-    id_token: createToken(user)
-  });
+  handleSessionCreation(request, response)
 });
